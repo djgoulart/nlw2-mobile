@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Text } from 'react-native';
 import { TextInput, BorderlessButton, RectButton } from 'react-native-gesture-handler';
 import { Feather } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import PageHeader from '../../components/PageHeader';
 import TeacherItem, {Teacher} from '../../components/TeacherItem';
 
-import styles from './styles';
 import api from '../../services/api';
+import styles from './styles';
 
 const TeacherList: React.FC = () => {
-
   const [isFiltersVisible, setIsFiltersVisible] = useState(false)
   
   const [subject, setSubject] = useState('');
@@ -18,7 +18,21 @@ const TeacherList: React.FC = () => {
   const [time, setTime] = useState('');
   
   const [availableClasses, setAvailableClasses] = useState([]);
+  const [favoriteClasses, setFavoriteClasses] = useState<number[]>([]);
 
+  function loadFavorites() {
+    AsyncStorage.getItem('favorites').then(response => {
+      if(response) {
+        const favoriteList = JSON.parse(response);
+        
+        const favoriteIds = favoriteList.map((favoriteItem:Teacher) => {
+          return favoriteItem.id;
+        });
+
+        setFavoriteClasses(favoriteIds)
+      }
+    });
+  }
 
   function handleToggleFiltersVisibility() {
     setIsFiltersVisible(!isFiltersVisible)
@@ -26,6 +40,8 @@ const TeacherList: React.FC = () => {
 
   async function handleFiltersSubmit()
   {
+    loadFavorites();
+    
     const response = await api.get('classes', {
       params: {
         subject,
@@ -99,7 +115,13 @@ const TeacherList: React.FC = () => {
 
         {
           availableClasses.map((availableClass:Teacher) => {
-            return <TeacherItem teacher={availableClass} key={availableClass.id} />
+            return (
+              <TeacherItem 
+              teacher={availableClass} 
+              key={availableClass.id}
+              isFavorite={favoriteClasses.includes(availableClass.id)} 
+              />
+            )
           })
         }
         
