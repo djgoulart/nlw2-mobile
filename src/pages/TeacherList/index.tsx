@@ -9,6 +9,7 @@ import TeacherItem, {Teacher} from '../../components/TeacherItem';
 
 import api from '../../services/api';
 import styles from './styles';
+import { useFocusEffect } from '@react-navigation/native';
 
 const TeacherList: React.FC = () => {
   const [isFiltersVisible, setIsFiltersVisible] = useState(false)
@@ -41,7 +42,7 @@ const TeacherList: React.FC = () => {
   async function handleFiltersSubmit()
   {
     loadFavorites();
-    
+
     const response = await api.get('classes', {
       params: {
         subject,
@@ -53,6 +54,10 @@ const TeacherList: React.FC = () => {
     setAvailableClasses(response.data)
     setIsFiltersVisible(false)
   }
+
+  useFocusEffect(() => {
+    loadFavorites();
+  })
 
   return (
     <View style={styles.container}>
