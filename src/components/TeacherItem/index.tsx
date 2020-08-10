@@ -8,32 +8,43 @@ import whatsappIcon from '../../assets/images/icons/whatsapp.png';
 
 import styles from './styles';
 
-const TeacherItem: React.FC = () => {
+export interface Teacher {
+  avatar: string;
+  bio: string;
+  cost: number;
+  id: number;
+  user_id: number;
+  name: string;
+  subject: string;
+  whatsapp: string;
+}
+
+interface TeacherItemProps {
+  teacher: Teacher;
+}
+
+const TeacherItem: React.FC<TeacherItemProps> = ({teacher}) => {
   return (
     <View style={styles.container}>
       <View style={styles.profile}>
         <Image 
           style={styles.avatar}
-          source={{ 
-            uri: 'https://avatars2.githubusercontent.com/u/10280312?s=460&u=353bf0df7bc3f6867d881749394f19fe71927607&v=4'
-         }}
+          source={{ uri: teacher.avatar}}
         />
 
         <View style={styles.profileInfo}>
-          <Text style={styles.name}>Diego Goulart</Text>
-          <Text style={styles.subject}>Matemática</Text>
+          <Text style={styles.name}>{teacher.name}</Text>
+          <Text style={styles.subject}>{teacher.subject}</Text>
         </View>
       </View>
       
       <Text style={styles.bio}>
-        O melhor professor de matemática da atualidade.
-        {'\n'}{'\n'}
-        Sério você não vai encontrar ninguém melhor para te ensinar a taboada.
+        {teacher.bio}
       </Text>
 
       <View style={styles.footer}>
         <Text style={styles.price}>Preço/hora{'   '}
-          <Text style={styles.priceValue}>R$98,00</Text>
+          <Text style={styles.priceValue}>{teacher.cost}</Text>
         </Text>
 
         <View style={styles.buttonsContainer}>
